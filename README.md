@@ -14,7 +14,7 @@ Quick Pick is a Windows Forms executable, written in Visual Basic.  The applicat
 
 Installation:  
 
-Download the "publish" directory.  Run the "Setup.exe" application.  Upon completion, an application icon will have been added to the start menu under the category "TSXToolkit" with the name “Quick Pick".  This application can be pinned to the Start if desired.  Upon launch, Quick Pick will install a database search file, “QuickPick.dbq)” in the user’s Software Bisque ”Database Queries” folder.  If desired, this query can be modified and saved in the Observing List Manager and will not be reset by this application after the first installation.  
+Download QuickPick.zip to your local drive from the publish directory. Extract all contents to a default directory (e.g. GuideLogAnalyzer). Launch setup.exe from that directory. Upon completion, an application icon will have been added to the start menu under "TSXToolKit" with the name “Quick Pick".  This application can be pinned to the Start if desired.  Upon launch, Quick Pick will install a database search file, “QuickPick.dbq)” in the user’s Software Bisque ”Database Queries” folder.  If desired, this query can be modified and saved in the Observing List Manager and will not be reset by this application after the first installation.  
 
 Operation:  
 
