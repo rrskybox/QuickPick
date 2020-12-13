@@ -45,17 +45,21 @@
             this.SizeTBMax = new System.Windows.Forms.Label();
             this.SizeTBMin = new System.Windows.Forms.Label();
             this.Label3 = new System.Windows.Forms.Label();
-            this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
+            this.HelpButton = new System.Windows.Forms.Button();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.textBox3 = new System.Windows.Forms.TextBox();
+            this.textBox4 = new System.Windows.Forms.TextBox();
+            this.textBox5 = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.DurationTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.AltitudeTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.SizeTrackBar)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             this.SuspendLayout();
             // 
             // Label9
             // 
             this.Label9.AutoSize = true;
-            this.Label9.Location = new System.Drawing.Point(383, 9);
+            this.Label9.Location = new System.Drawing.Point(600, 42);
             this.Label9.Name = "Label9";
             this.Label9.Size = new System.Drawing.Size(43, 13);
             this.Label9.TabIndex = 68;
@@ -64,7 +68,7 @@
             // Label8
             // 
             this.Label8.AutoSize = true;
-            this.Label8.Location = new System.Drawing.Point(25, 69);
+            this.Label8.Location = new System.Drawing.Point(44, 42);
             this.Label8.Name = "Label8";
             this.Label8.Size = new System.Drawing.Size(70, 13);
             this.Label8.TabIndex = 67;
@@ -73,7 +77,7 @@
             // Closebutton
             // 
             this.Closebutton.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.Closebutton.Location = new System.Drawing.Point(59, 407);
+            this.Closebutton.Location = new System.Drawing.Point(598, 409);
             this.Closebutton.Name = "Closebutton";
             this.Closebutton.Size = new System.Drawing.Size(45, 29);
             this.Closebutton.TabIndex = 66;
@@ -163,9 +167,9 @@
             // NGCTypesList
             // 
             this.NGCTypesList.FormattingEnabled = true;
-            this.NGCTypesList.Location = new System.Drawing.Point(28, 96);
+            this.NGCTypesList.Location = new System.Drawing.Point(25, 80);
             this.NGCTypesList.Name = "NGCTypesList";
-            this.NGCTypesList.Size = new System.Drawing.Size(114, 238);
+            this.NGCTypesList.Size = new System.Drawing.Size(114, 290);
             this.NGCTypesList.Sorted = true;
             this.NGCTypesList.TabIndex = 51;
             this.NGCTypesList.SelectedIndexChanged += new System.EventHandler(this.NGCTypesList_SelectedIndexChanged);
@@ -173,9 +177,9 @@
             // NGCList
             // 
             this.NGCList.FormattingEnabled = true;
-            this.NGCList.Location = new System.Drawing.Point(357, 31);
+            this.NGCList.Location = new System.Drawing.Point(571, 77);
             this.NGCList.Name = "NGCList";
-            this.NGCList.Size = new System.Drawing.Size(107, 407);
+            this.NGCList.Size = new System.Drawing.Size(107, 303);
             this.NGCList.TabIndex = 50;
             this.NGCList.SelectedIndexChanged += new System.EventHandler(this.NGCList_SelectedIndexChanged);
             // 
@@ -219,26 +223,83 @@
             this.Label3.Text = "Size\r\n(arcmin)";
             this.Label3.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
-            // numericUpDown1
+            // HelpButton
             // 
-            this.numericUpDown1.Location = new System.Drawing.Point(168, 413);
-            this.numericUpDown1.Maximum = new decimal(new int[] {
-            1000,
-            0,
-            0,
-            0});
-            this.numericUpDown1.Name = "numericUpDown1";
-            this.numericUpDown1.Size = new System.Drawing.Size(41, 20);
-            this.numericUpDown1.TabIndex = 69;
-            this.numericUpDown1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.HelpButton.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.HelpButton.Location = new System.Drawing.Point(57, 404);
+            this.HelpButton.Name = "HelpButton";
+            this.HelpButton.Size = new System.Drawing.Size(45, 29);
+            this.HelpButton.TabIndex = 71;
+            this.HelpButton.Text = "Help";
+            this.HelpButton.UseVisualStyleBackColor = true;
+            // 
+            // textBox1
+            // 
+            this.textBox1.BackColor = System.Drawing.Color.Cyan;
+            this.textBox1.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.textBox1.Location = new System.Drawing.Point(401, 42);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(100, 13);
+            this.textBox1.TabIndex = 72;
+            this.textBox1.Text = "Sector";
+            this.textBox1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // textBox2
+            // 
+            this.textBox2.BackColor = System.Drawing.Color.Cyan;
+            this.textBox2.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.textBox2.Location = new System.Drawing.Point(444, 115);
+            this.textBox2.Name = "textBox2";
+            this.textBox2.Size = new System.Drawing.Size(19, 13);
+            this.textBox2.TabIndex = 73;
+            this.textBox2.Text = "N";
+            this.textBox2.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // textBox3
+            // 
+            this.textBox3.BackColor = System.Drawing.Color.Cyan;
+            this.textBox3.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.textBox3.Location = new System.Drawing.Point(342, 222);
+            this.textBox3.Name = "textBox3";
+            this.textBox3.Size = new System.Drawing.Size(18, 13);
+            this.textBox3.TabIndex = 74;
+            this.textBox3.Text = "W";
+            this.textBox3.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // textBox4
+            // 
+            this.textBox4.BackColor = System.Drawing.Color.Cyan;
+            this.textBox4.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.textBox4.Location = new System.Drawing.Point(444, 317);
+            this.textBox4.Name = "textBox4";
+            this.textBox4.Size = new System.Drawing.Size(27, 13);
+            this.textBox4.TabIndex = 75;
+            this.textBox4.Text = "S";
+            this.textBox4.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // textBox5
+            // 
+            this.textBox5.BackColor = System.Drawing.Color.Cyan;
+            this.textBox5.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.textBox5.Location = new System.Drawing.Point(543, 222);
+            this.textBox5.Name = "textBox5";
+            this.textBox5.Size = new System.Drawing.Size(22, 13);
+            this.textBox5.TabIndex = 76;
+            this.textBox5.Text = "E";
+            this.textBox5.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // FormQuickPick
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.SystemColors.HotTrack;
-            this.ClientSize = new System.Drawing.Size(619, 450);
-            this.Controls.Add(this.numericUpDown1);
+            this.BackColor = System.Drawing.Color.Cyan;
+            this.ClientSize = new System.Drawing.Size(699, 450);
+            this.Controls.Add(this.textBox5);
+            this.Controls.Add(this.textBox4);
+            this.Controls.Add(this.textBox3);
+            this.Controls.Add(this.textBox2);
+            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.HelpButton);
             this.Controls.Add(this.Label9);
             this.Controls.Add(this.Label8);
             this.Controls.Add(this.Closebutton);
@@ -256,14 +317,13 @@
             this.Controls.Add(this.SizeTBMax);
             this.Controls.Add(this.SizeTBMin);
             this.Controls.Add(this.Label3);
-            this.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.ForeColor = System.Drawing.Color.Black;
             this.Name = "FormQuickPick";
-            this.Text = "Form1";
+            this.Text = "QuickPick";
             this.TopMost = true;
             ((System.ComponentModel.ISupportInitialize)(this.DurationTrackBar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.AltitudeTrackBar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.SizeTrackBar)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -287,7 +347,12 @@
         internal System.Windows.Forms.Label SizeTBMax;
         internal System.Windows.Forms.Label SizeTBMin;
         internal System.Windows.Forms.Label Label3;
-        private System.Windows.Forms.NumericUpDown numericUpDown1;
+        internal System.Windows.Forms.Button HelpButton;
+        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.TextBox textBox3;
+        private System.Windows.Forms.TextBox textBox4;
+        private System.Windows.Forms.TextBox textBox5;
     }
 }
 

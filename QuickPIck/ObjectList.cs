@@ -147,6 +147,10 @@ namespace QuickPIck
             { DBQFileManagement.InstallDBQ(); }
             sky6DataWizard tsxdw = new sky6DataWizard();
             tsxdw.Path = DBQFileManagement.QuickPickDestinationPath;
+            System.Threading.Thread.Sleep(1000);
+            string testw1 = tsxdw.Path;
+            System.Threading.Thread.Sleep(100);
+            string testw2 = tsxdw.Path;
             tsxdw.Open();
             //sky6ObjectInformation tsxoi = new sky6ObjectInformation();
             sky6ObjectInformation tsxoi = tsxdw.RunQuery;
@@ -242,7 +246,7 @@ namespace QuickPIck
         public List<DBQObject> SizeSort()
         {
             //Sort list on size of object
-            dbqList =  dbqList.OrderBy(i => -i.Size).ToList();
+            dbqList = dbqList.OrderBy(i => -i.Size).ToList();
             return dbqList;
         }
         public List<DBQObject> AltitudeSort()

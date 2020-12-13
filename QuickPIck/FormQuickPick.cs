@@ -60,6 +60,7 @@
 //
 using System;
 using System.Collections.Generic;
+using System.Deployment.Application;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
@@ -69,7 +70,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
 using System.Reflection;
-//using Microsoft.VisualBasic.PowerPacks;
+using Microsoft.VisualBasic.PowerPacks;
 using TheSkyXLib;
 
 namespace QuickPIck
@@ -77,6 +78,9 @@ namespace QuickPIck
     public partial class FormQuickPick : Form
     {
         private ObjectList olist;
+
+        public bool LeftAzimuthSelectFlag = false;
+        public bool RightAzimuthSelectFlag = false;
 
         public string TypePicked;
         public double SizeMax;
@@ -86,7 +90,31 @@ namespace QuickPIck
         public double AltitudeMax;
         public double AltitudeMin;
 
-        const int MainCircleDrawLocationX = 485 - 75;
+        public double AzimuthRight;
+        public double AzimuthLeft;
+        public double LineAngleLeft;
+        public double LineAngleRight;
+
+        public LineShape theLeftLine;
+        public LineShape theInnerLeftLine;
+        public LineShape theOuterLeftLine;
+        public LineShape theRightLine;
+        public LineShape theInnerRightLine;
+        public LineShape theOuterRightLine;
+
+        public OvalShape theMainCircle; // withevents
+        public OvalShape theLeftCircle; // WithEvents
+        public OvalShape theRightCircle; //WithEvents
+
+        public Point LeftTip;
+        public Point RightPoint;
+        public Point RightTip;
+
+        public Point CenterPoint;
+
+        public ShapeContainer canvas;
+
+        const int MainCircleDrawLocationX = 452 - 75;
         const int MainCircleDrawLocationY = 222 - 75;
         const int MainCircleSize = 150;
         const int MainCircleBorder = 20;
@@ -99,15 +127,32 @@ namespace QuickPIck
         public FormQuickPick()
         {
             InitializeComponent();
+            //Set Title of form for name and version
+            try
+            { this.Text = ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString(); }
+            catch
+            {
+                //probably in debug mode
+                this.Text = " in Debug";
+            }
+            this.Text = "QuickPick V" + this.Text;
+            //Configuration defaults
             QuickPickLaunch();
+            //Events
             Closebutton.MouseClick += new System.Windows.Forms.MouseEventHandler(Closebutton_Click);
+            theLeftCircle.MouseDown += new MouseEventHandler(LeftCircle_MouseClickDown);
+            theRightCircle.MouseDown += new MouseEventHandler(RightCircle_MouseClickDown);
+            theMainCircle.MouseUp += new MouseEventHandler(Azimuth_MouseClickUp);
+            theLeftCircle.MouseDoubleClick += new MouseEventHandler(LeftCircle_MouseDoubleClick);
+            theRightCircle.MouseDoubleClick += new MouseEventHandler(RightCircle_MouseDoubleClick);
             return;
         }
 
         private void QuickPickLaunch()
-        //Upon launch, load and create the required database query, run it and set the object
-        //  type list and minimum/maximum values
         {
+            //Upon launch, load and create the required database query, run it and set the object
+            //  type list and minimum/maximum values
+
             olist = new ObjectList();
             //Reset sort max/min
             ResetNonAzCriteria();
@@ -129,7 +174,8 @@ namespace QuickPIck
                 { NGCTypesList.Items.Add(olist.TypeName(oi)); }
             }
             ResetThumbPositions();
-            return; ;
+            SetUpSectorDraw();
+            return;
         }
 
         private void SizeTrackBar_Change(Object sender, EventArgs e)
@@ -186,6 +232,74 @@ namespace QuickPIck
             //ResetThumbPositions();
             List<DBQObject> sortList = olist.SizeSort();
             SelectCheck(sortList, NGCTypesList.SelectedItem.ToString());
+            ResetThumbPositions();
+            AzReset();
+            return;
+        }
+
+        private void LeftCircle_MouseClickDown(Object sender, EventArgs e)
+        {
+            //Handles theLeftCircle.MouseDown
+            //When  a click hits the left circle tip, turn on the left flag and turn off the right (if it was on)
+            LeftAzimuthSelectFlag = true;
+            RightAzimuthSelectFlag = false;
+            return;
+        }
+
+        private void RightCircle_MouseClickDown(object sender, EventArgs e)
+        {
+            //Handles theRightCircle.MouseDown
+            //When a click hits the right circle tip, turn on the right flag and turn off the left (if it was on)
+            RightAzimuthSelectFlag = true;
+            LeftAzimuthSelectFlag = false;
+            return;
+        }
+
+        private void Azimuth_MouseClickUp(object sender, EventArgs e)
+        {
+            //Handles theMainCircle.MouseUp
+            //When the click is released, (left or right) on the main circle then this handles it
+            //  IF the left flag is set then change the azimuth compass point to the new location
+            //       and reconstruct that side of the indicator
+            //  Otherwise do the same thing on the right
+            //Then resot the object list for the new azimuth range
+            //
+            if (LeftAzimuthSelectFlag)
+            {
+                Point offset = new Point(CircleRadius, CircleRadius);
+                Point v = theMainCircle.PointToClient(System.Windows.Forms.Control.MousePosition);
+                v.X -= offset.X;
+                v.Y -= offset.Y;
+                LineAngleLeft = Utilities.NormalizeAngle(Math.Atan2(v.Y, v.X));
+                SetAzimuthLeft(LineAngleLeft);
+                SelectCheck();
+            }
+            else if (RightAzimuthSelectFlag)
+            {
+                Point offset = new Point(CircleRadius, CircleRadius);
+                Point v = theMainCircle.PointToClient(System.Windows.Forms.Control.MousePosition);
+                v.X -= offset.X;
+                v.Y -= offset.Y;
+                LineAngleRight = Utilities.NormalizeAngle(Math.Atan2(v.Y, v.X));
+                SetAzimuthRight(LineAngleRight);
+                SelectCheck();
+            }
+            return;
+        }
+
+        private void LeftCircle_MouseDoubleClick(object sender, EventArgs e)
+        {
+            //Handles theLeftCircle.DoubleClick
+            //When the left azimuth circle tip is double clicked, bring the right circle tip so it shows over the left
+            theRightCircle.BringToFront();
+            return;
+        }
+
+        private void RightCircle_MouseDoubleClick(object sender, EventArgs e)
+        {
+            //Handles theRightCircle.DoubleClick
+            //When the right azimuth circle tip is double clicked, bring the left circle tip so it shows over the left
+            theLeftCircle.BringToFront();
             return;
         }
 
@@ -217,16 +331,6 @@ namespace QuickPIck
             DurationTrackBar.Value = (int)DurationMin;
             return;
         }
-
-        //private void azReset()
-        //{
-        //    //Reset azimuth choosers to zero
-        //    //LeftAzimuthSelectFlag = false;
-        //    //RightAzimuthSelectFlag = false;
-        //    //AzimuthLeft = Utilities.DegToRad(359.5);
-        //    //AzimuthRight = Utilities.DegToRad(0.5);
-        //    //SetUpSectorDraw();
-        //}
 
         //This is where the beef is...
 
@@ -321,94 +425,162 @@ namespace QuickPIck
             return;
         }
 
-        //private void SetUpSectorDraw()
-        //{
-        //    //Routine that constructs the azimuth compass gauge in all its glory
-        //    //Basically, a canvas is set up then a circle drawn around the center of the canvas
-        //    //Each indicator is build from three lines that form a triangle and a filled circle
-        //    //The triangle points left or right depending upon the indicator.  And, left is red; right is green.
+        private void SelectCheck()
+        {
+            //clears the object list, then builds a new one for all objects that
+            //meet the critera for output to sort list
+            NGCList.Items.Clear();
+            for (int oi = 0; oi < olist.Count; oi++)
+            {
+                if ((olist.TypeName(oi) == TypePicked) &&
+                           (olist.TgtSize(oi) > SizeTrackBar.Value) &&
+                           (olist.TgtDuration(oi) > DurationTrackBar.Value) &&
+                           (olist.TgtAltitude(oi) > AltitudeTrackBar.Value) &&
+                           (Utilities.AzRangeCheck(AzimuthLeft, AzimuthRight, Utilities.DegToRad(olist.TgtAzimuth(oi)))))
+                {
+                    NGCList.Items.Add(olist.TgtName(oi));
+                }
+            }
+            return;
+        }
 
-        //    ShapeContainer canvas = new ShapeContainer();
-        //    canvas.Parent = this;
 
-        //    //CenterPoint.X = MainCircleDrawLocationX + MainCircleSize / 2;
-        //    //CenterPoint.Y = MainCircleDrawLocationY + MainCircleSize / 2;
-        //    //CenterPoint = new Point(MainCircleDrawLocationX + (MainCircleSize / 2), MainCircleDrawLocationY + (MainCircleSize / 2));
+        private void SetUpSectorDraw()
+        {
+            //Routine that constructs the azimuth compass gauge in all its glory
+            //Basically, a canvas is set up then a circle drawn around the center of the canvas
+            //Each indicator is build from three lines that form a triangle and a filled circle
+            //The triangle points left or right depending upon the indicator.  And, left is red; right is green.
 
-        //    //theMainCircle.Parent = canvas;
-        //    //theMainCircle.Size = new System.Drawing.Size(MainCircleSize, MainCircleSize);
-        //    //theMainCircle.Location = new System.Drawing.Point(MainCircleDrawLocationX, MainCircleDrawLocationY);
-        //    //theMainCircle.BorderWidth = MainCircleBorder;
-        //    //theMainCircle.BorderColor = Color.LightBlue;
+            canvas = new ShapeContainer();
+            canvas.Parent = this;
 
-        //    //theLeftLine.Parent = canvas;
-        //    //theLeftLine.BorderColor = Color.Red;
-        //    //theLeftLine.BorderWidth = 2;
-        //    //theInnerLeftLine.Parent = canvas;
-        //    //theInnerLeftLine.BorderColor = Color.Red;
-        //    //theInnerLeftLine.BorderWidth = 2;
-        //    //theOuterLeftLine.Parent = canvas;
-        //    //theOuterLeftLine.BorderColor = Color.Red;
-        //    //theOuterLeftLine.BorderWidth = 2;
-        //    //theInnerRightLine.Parent = canvas;
-        //    //theInnerRightLine.BorderColor = Color.Green;
-        //    //theInnerRightLine.BorderWidth = 2;
-        //    //theOuterRightLine.Parent = canvas;
-        //    //theOuterRightLine.BorderColor = Color.Green;
-        //    //theOuterRightLine.BorderWidth = 2;
+            CenterPoint.X = MainCircleDrawLocationX + MainCircleSize / 2;
+            CenterPoint.Y = MainCircleDrawLocationY + MainCircleSize / 2;
+            CenterPoint = new Point(MainCircleDrawLocationX + (MainCircleSize / 2), MainCircleDrawLocationY + (MainCircleSize / 2));
 
-        //    //LineAngleLeft = Utilities.AzimuthToCanvas(AzimuthLeft);
-        //    //theLeftLine.StartPoint = CenterPoint;
-        //    //theLeftLine.EndPoint = new Point((int)(CircleRadius * Math.Cos(LineAngleLeft) + XCircleCenter),
-        //    //                                    (int)(CircleRadius * Math.Sin(LineAngleLeft) + YCircleCenter));
-        //    //LeftTip = Utilities.TriPoint(CenterPoint, CircleRadius, LineAngleLeft, -TipSize);
-        //    //theInnerLeftLine.StartPoint = CenterPoint;
-        //    //theInnerLeftLine.EndPoint = LeftTip;
-        //    //theOuterLeftLine.StartPoint = LeftTip;
-        //    //theOuterLeftLine.EndPoint = theLeftLine.EndPoint;
+            theMainCircle = new OvalShape();
+            theLeftCircle = new OvalShape();
+            theRightCircle = new OvalShape();
+            theLeftLine = new LineShape();
+            theRightLine = new LineShape();
+            theInnerLeftLine = new LineShape();
+            theInnerRightLine = new LineShape();
+            theOuterLeftLine = new LineShape();
+            theOuterRightLine = new LineShape();
 
-        //    //theLeftCircle.Parent = canvas;
-        //    //theLeftCircle.Size = new System.Drawing.Size(PointCircleSize, PointCircleSize);
-        //    //theLeftCircle.Location = Utilities.LocationOffset(theLeftLine.EndPoint, PointCircleSize);
-        //    //theLeftCircle.BorderColor = Color.Red;
-        //    //theLeftCircle.FillColor = Color.Red;
-        //    //theLeftCircle.FillStyle = FillStyle.Solid;
-        //    //theLeftCircle.BringToFront();
+            theMainCircle.Parent = canvas;
+            theMainCircle.Size = new System.Drawing.Size(MainCircleSize, MainCircleSize);
+            theMainCircle.Location = new System.Drawing.Point(MainCircleDrawLocationX, MainCircleDrawLocationY);
+            theMainCircle.BorderWidth = MainCircleBorder;
+            theMainCircle.BorderColor = Color.LightBlue;
 
-        //    //theRightLine.Parent = canvas;
-        //    //theRightLine.BorderColor = Color.Green;
-        //    //theRightLine.BorderWidth = 2;
+            theLeftLine.Parent = canvas;
+            theLeftLine.BorderColor = Color.Red;
+            theLeftLine.BorderWidth = 2;
+            theInnerLeftLine.Parent = canvas;
+            theInnerLeftLine.BorderColor = Color.Red;
+            theInnerLeftLine.BorderWidth = 2;
+            theOuterLeftLine.Parent = canvas;
+            theOuterLeftLine.BorderColor = Color.Red;
+            theOuterLeftLine.BorderWidth = 2;
+            theInnerRightLine.Parent = canvas;
+            theInnerRightLine.BorderColor = Color.Green;
+            theInnerRightLine.BorderWidth = 2;
+            theOuterRightLine.Parent = canvas;
+            theOuterRightLine.BorderColor = Color.Green;
+            theOuterRightLine.BorderWidth = 2;
 
-        //    //LineAngleRight = Utilities.AzimuthToCanvas(AzimuthRight);
-        //    //theRightLine.StartPoint = CenterPoint;
-        //    //theRightLine.EndPoint = new Point((int)(CircleRadius * Math.Cos(LineAngleRight) + XCircleCenter), (int)(CircleRadius * Math.Sin(LineAngleRight) + YCircleCenter));
-        //    //RightTip = Utilities.TriPoint(CenterPoint, CircleRadius, LineAngleRight, TipSize);
-        //    //theInnerRightLine.StartPoint = CenterPoint;
-        //    //theInnerRightLine.EndPoint = RightTip;
-        //    //theOuterRightLine.StartPoint = RightTip;
-        //    //theOuterRightLine.EndPoint = theRightLine.EndPoint;
+            LineAngleLeft = Utilities.AzimuthToCanvas(AzimuthLeft);
+            theLeftLine.StartPoint = CenterPoint;
+            theLeftLine.EndPoint = new Point((int)(CircleRadius * Math.Cos(LineAngleLeft) + XCircleCenter),
+                                                (int)(CircleRadius * Math.Sin(LineAngleLeft) + YCircleCenter));
+            LeftTip = Utilities.TriPoint(CenterPoint, CircleRadius, LineAngleLeft, -TipSize);
+            theInnerLeftLine.StartPoint = CenterPoint;
+            theInnerLeftLine.EndPoint = LeftTip;
+            theOuterLeftLine.StartPoint = LeftTip;
+            theOuterLeftLine.EndPoint = theLeftLine.EndPoint;
 
-        //    //theRightCircle.Parent = canvas;
-        //    //theRightCircle.Size = new System.Drawing.Size(PointCircleSize, PointCircleSize);
-        //    //theRightCircle.Location = Utilities.LocationOffset(theRightLine.EndPoint, PointCircleSize);
-        //    //theRightCircle.BorderColor = Color.Green;
-        //    //theRightCircle.FillColor = Color.Green;
-        //    //theRightCircle.FillStyle = FillStyle.Solid;
-        //    //theRightCircle.BringToFront();
-        //    return;
-        //}
+            theLeftCircle.Parent = canvas;
+            theLeftCircle.Size = new System.Drawing.Size(PointCircleSize, PointCircleSize);
+            theLeftCircle.Location = Utilities.LocationOffset(theLeftLine.EndPoint, PointCircleSize);
+            theLeftCircle.BorderColor = Color.Red;
+            theLeftCircle.FillColor = Color.Red;
+            theLeftCircle.FillStyle = FillStyle.Solid;
+            theLeftCircle.BringToFront();
 
-        //private void HelpTips()
-        //{
-        //    //Reads in help tips text and presents it as a message box
+            theRightLine.Parent = canvas;
+            theRightLine.BorderColor = Color.Green;
+            theRightLine.BorderWidth = 2;
 
-        //    //Collect the file contents to be written
-        //    Assembly dassembly = Assembly.GetExecutingAssembly();
-        //    Stream dstream = dassembly.GetManifestResourceStream("QuickPick.Help and Tips.txt");
-        //    StreamReader tsreader = new StreamReader(dstream);
-        //    string via = tsreader.ReadToEnd();
-        //    System.Windows.Forms.MessageBox.Show(via);
-        //    return;
-        //}
+            LineAngleRight = Utilities.AzimuthToCanvas(AzimuthRight);
+            theRightLine.StartPoint = CenterPoint;
+            theRightLine.EndPoint = new Point((int)(CircleRadius * Math.Cos(LineAngleRight) + XCircleCenter), (int)(CircleRadius * Math.Sin(LineAngleRight) + YCircleCenter));
+            RightTip = Utilities.TriPoint(CenterPoint, CircleRadius, LineAngleRight, TipSize);
+            theInnerRightLine.StartPoint = CenterPoint;
+            theInnerRightLine.EndPoint = RightTip;
+            theOuterRightLine.StartPoint = RightTip;
+            theOuterRightLine.EndPoint = theRightLine.EndPoint;
+
+            theRightCircle.Parent = canvas;
+            theRightCircle.Size = new System.Drawing.Size(PointCircleSize, PointCircleSize);
+            theRightCircle.Location = Utilities.LocationOffset(theRightLine.EndPoint, PointCircleSize);
+            theRightCircle.BorderColor = Color.Green;
+            theRightCircle.FillColor = Color.Green;
+            theRightCircle.FillStyle = FillStyle.Solid;
+            theRightCircle.BringToFront();
+            return;
+        }
+
+        private void HelpTips()
+        {
+            //Reads in help tips text and presents it as a message box
+
+            //Collect the file contents to be written
+            Assembly dassembly = Assembly.GetExecutingAssembly();
+            Stream dstream = dassembly.GetManifestResourceStream("QuickPick.Help and Tips.txt");
+            StreamReader tsreader = new StreamReader(dstream);
+            string via = tsreader.ReadToEnd();
+            System.Windows.Forms.MessageBox.Show(via);
+            return;
+        }
+
+        private void SetAzimuthRight(double newLineAngle)
+        {
+            LineAngleRight = newLineAngle;
+            AzimuthRight = Utilities.CanvasToAzimuth(LineAngleRight);
+            theRightLine.EndPoint = new Point((int)(CircleRadius * Math.Cos(LineAngleRight) + XCircleCenter), (int)(CircleRadius * Math.Sin(LineAngleRight) + YCircleCenter));
+            RightTip = Utilities.TriPoint(CenterPoint, CircleRadius, LineAngleRight, TipSize);
+            theInnerRightLine.EndPoint = RightTip;
+            theOuterRightLine.StartPoint = RightTip;
+            theOuterRightLine.StartPoint = theInnerRightLine.EndPoint;
+            theOuterRightLine.EndPoint = theRightLine.EndPoint;
+            theRightCircle.Location = Utilities.LocationOffset(theRightLine.EndPoint, PointCircleSize);
+            RightAzimuthSelectFlag = false;
+            return;
+        }
+
+        private void SetAzimuthLeft(double newLineAngle)
+        {
+            LineAngleLeft = newLineAngle;
+            AzimuthLeft = Utilities.CanvasToAzimuth(LineAngleLeft);
+            theLeftLine.EndPoint = new Point((int)(CircleRadius * Math.Cos(LineAngleLeft) + XCircleCenter), (int)(CircleRadius * Math.Sin(LineAngleLeft) + YCircleCenter));
+            LeftTip = Utilities.TriPoint(CenterPoint, CircleRadius, LineAngleLeft, -TipSize);
+            theInnerLeftLine.EndPoint = LeftTip;
+            theOuterLeftLine.StartPoint = LeftTip;
+            theOuterLeftLine.StartPoint = theInnerLeftLine.EndPoint;
+            theOuterLeftLine.EndPoint = theLeftLine.EndPoint;
+            theLeftCircle.Location = Utilities.LocationOffset(theLeftLine.EndPoint, PointCircleSize);
+            LeftAzimuthSelectFlag = false;
+            return;
+        }
+
+        private void AzReset()
+        {
+            SetAzimuthRight(Math.PI * 270 / 180);
+            SetAzimuthLeft(Math.PI * 270 / 180);
+            return;
+        }
     }
+
 }

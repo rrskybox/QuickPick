@@ -20,26 +20,27 @@ namespace QuickPIck
 
         public static bool DBQInstalled()
         {
+            string userDocumentsDirectory = System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             //Checks to see if search database file is already installed or not
-            QuickPickDestinationPath = "C:\\Users\\" + System.Environment.UserName +
-                "\\Documents\\Software Bisque\\TheSkyX Professional Edition\\Database Queries\\QuickPick.dbq";
+            QuickPickDestinationPath = userDocumentsDirectory + "\\Software Bisque\\TheSkyX Professional Edition\\Database Queries\\QuickPick.dbq";
             return File.Exists(QuickPickDestinationPath);
         }
 
         public static void InstallDBQ()
         {
             //Installs the dbq file
-            QuickPickDestinationPath = "C:\\Users\\" + System.Environment.UserName +
-                "\\Documents\\Software Bisque\\TheSkyX Professional Edition\\Database Queries\\QuickPick.dbq";
+            string userDocumentsDirectory = System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            QuickPickDestinationPath = userDocumentsDirectory + "\\Software Bisque\\TheSkyX Professional Edition\\Database Queries\\QuickPick.dbq";
             //Collect the file contents to be written
-            Assembly dassembly = Assembly.GetExecutingAssembly();
-            Stream dstream = dassembly.GetManifestResourceStream("QuickPick.QuickPick.dbq");
-            Byte[] dbytes = new Byte[dstream.Length];
-            FileStream dbqfile = File.Create(QuickPickDestinationPath);
-            dbqfile.Close();
+            Assembly dgassembly = Assembly.GetExecutingAssembly();
+            Stream dgstream = dgassembly.GetManifestResourceStream("QuickPick.QuickPick.dbq");
+            Byte[] dgbytes = new Byte[dgstream.Length];
+            FileStream dbqgfile = File.Create(QuickPickDestinationPath);
+            int dgreadout = dgstream.Read(dgbytes, 0, (int)dgstream.Length);
+            dbqgfile.Close();
             //write to destination file
-            File.WriteAllBytes(QuickPickDestinationPath, dbytes);
-            dstream.Close();
+            File.WriteAllBytes(QuickPickDestinationPath, dgbytes);
+            dgstream.Close();
             return;
         }
 
