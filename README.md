@@ -10,7 +10,7 @@ Quick Pick facilitates a rapid sort through a set of currently available imaging
 
 Requirements:  
 
-Quick Pick is a Windows Forms executable, written in Visual Basic.  The application runs as an uncertified, standalone application under Windows 7, 8 and 10.  The application requires TSX Pro.
+Quick Pick is a Windows Forms executable, written in C#.  The application runs as an uncertified, standalone application under Windows 7, 8 and 10.  The application requires TSX Pro, .NET 4.8 and Microsoft Visual Basic Power Packs 3.0 (for drawing).
 
 Installation:  
 
