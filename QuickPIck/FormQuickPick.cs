@@ -581,6 +581,21 @@ namespace QuickPIck
             SetAzimuthLeft(Math.PI * 270 / 180);
             return;
         }
+
+        private void HelpButton_Click(object sender, EventArgs e)
+        {
+            //  'Reads in help tips text and presents it as a message box
+
+            Assembly dassembly;
+            Stream dstream;
+            
+            //Collect the file contents to be written
+            dassembly = Assembly.GetExecutingAssembly();
+            dstream = dassembly.GetManifestResourceStream("QuickPick.Help and Tips.txt");
+            StreamReader tsreader = new StreamReader(dstream);
+            string via = tsreader.ReadToEnd();
+            MessageBox.Show(via);
+        }
     }
 
 }

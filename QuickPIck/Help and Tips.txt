@@ -1,0 +1,53 @@
+﻿Note: Usage
+Upon launch, QuickPick will diredt TSX to build an observing list of
+all (up to the maximum observing list size) M(essier) and NGC targets
+that are currently above 30 degrees altitude.  The left box in
+QuickPick will show all the Type Names that were found.  
+
+Upon selection of an object type, QuickPick will sort through the list
+and display sorted names in the box to the right.  The min and max
+values for object size, remaining time above the horizon, and current
+altitude will be displayed at each end of the sliders.  Moving the
+sliders up will eliminate objects from the object list that do not meet
+that critera.  See the note below for how to operate the sector dial.
+
+Upon selection of an object, QuickPick will cause TSX to find the
+object details and display the object on the star chart.  If the
+See the note below on setting up the Star Chart.
+
+Note: Using the "Sector" dial
+The Sector dial is used to restrict the object listing to an azimuth range.
+This is particularly useful when avoiding moonlight, or when using a dome
+in windy conditions.  The red and green points indicate the clockwise and
+counterclockwise boundaries of the range respectively.  To move, click down
+on either the green or red circle, then move the curser to the desired location
+on the light blue circle and release.  If you don't release on the blue circle
+the move will be ignored.  If one circle tip is covering the other, then
+ double click on it to expose the covered circle tip.  Or,just  move the 
+ overing circle tip.
+
+Note: Setting up TSX Star Chart
+The Star Chart can be used most effectively by setting the Zoom (chart width)
+to Telescope or slightly larger.  Also uncheck the "Show small Digitized Sky
+photos..." box in the "Non-Steller Object Options" window under the
+"Display" menu.
+
+Note: Object List Size
+The maximum number of objects produced by the QuickPick.dbq query is
+controlled by the parameter in the Advanced Preferences set up window.
+However, a smaller value may produce an uneven distribution of objects in
+both size and location.
+
+Note: Object Database Search Query file
+The QuickPick.dbq query is installed whenever that file does not exist in
+the Software Bisque\Database Queries folder.  However, once installed it
+can be modified then resaved under the same name using the Observing List
+Management functions.  For instance, the minimum altitude could be modified
+from the default 30 degrees to some other value in the Filter tab.
+
+Note: Using with CCD AutoPilot
+When an object has been selected and displayed on the Star Chart, the "Get"
+function in the CCDAP Session window will download the object FOV information
+including location and rotation PA.  The object can then be run as a CCDAP
+target.
+

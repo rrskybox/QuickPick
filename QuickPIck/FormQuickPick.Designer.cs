@@ -232,6 +232,7 @@
             this.HelpButton.TabIndex = 71;
             this.HelpButton.Text = "Help";
             this.HelpButton.UseVisualStyleBackColor = true;
+            this.HelpButton.Click += new System.EventHandler(this.HelpButton_Click);
             // 
             // textBox1
             // 
