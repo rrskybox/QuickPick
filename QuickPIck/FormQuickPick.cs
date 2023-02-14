@@ -58,20 +58,15 @@
 // 06-18-16      REM 1.1.0   Release implementation
 // ---------------------------------------------------------------------------------
 //
+using Microsoft.VisualBasic.PowerPacks;
 using System;
 using System.Collections.Generic;
 using System.Deployment.Application;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using System.IO;
 using System.Reflection;
-using Microsoft.VisualBasic.PowerPacks;
-using TheSkyXLib;
+using System.Windows.Forms;
+using TheSky64Lib;
 
 namespace QuickPIck
 {
